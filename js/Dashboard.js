@@ -4,6 +4,7 @@ import { ToDoWidget } from './ToDoWidget.js';
 import { UIComponent } from './UIComponent.js';
 import { WeatherWidget } from './WeatherWidget.js';
 import { el } from './dom.js';
+import { savePanel } from './storage.js';
 
 // Типы виджетов: по этому списку строятся кнопки «Добавить виджет»
 export const WIDGET_TYPES = {
@@ -41,15 +42,17 @@ class ErrorCard extends UIComponent {
 }
 
 export class Dashboard {
-  constructor({ desk, emptyNote, onUpdate, onHint, onRemoved }) {
+  constructor({ desk, emptyNote, onUpdate, onHint, onRemoved, onSaveError }) {
     this.desk = desk;
     this.emptyNote = emptyNote;
     this.onUpdate = onUpdate;
     this.onHint = onHint;
     this.onRemoved = onRemoved;
+    this.onSaveError = onSaveError;
     this.widgets = new Map();
     this.counter = 0;
     this.attentionTimer = 0;
+    this.restoring = false;
   }
 
   find(type) {
@@ -76,7 +79,7 @@ export class Dashboard {
       collapsed: record.collapsed,
       state: record.state,
       onRemove: (widgetId) => this.removeWidget(widgetId),
-      onChange: () => this.changed(),
+      onChange: () => this.save(),
     };
 
     let widget;
@@ -113,8 +116,29 @@ export class Dashboard {
     this.attentionTimer = setTimeout(() => widget.element?.classList.remove('is-attention'), 1200);
   }
 
+  // Восстановление набора: неизвестные и повторные типы пропускаются
+  restore(records) {
+    this.restoring = true;
+    let skipped = 0;
+    for (const record of records) {
+      const known = typeof record?.type === 'string' && Object.hasOwn(WIDGET_TYPES, record.type);
+      if (known && !this.find(record.type)) this.addWidget(record.type, record);
+      else skipped += 1;
+    }
+    this.restoring = false;
+    this.changed();
+    return skipped;
+  }
+
+  save() {
+    if (this.restoring) return;
+    const records = [...this.widgets.values()].map((widget) => widget.serialize());
+    if (!savePanel(records)) this.onSaveError?.();
+  }
+
   changed() {
     this.emptyNote.hidden = this.widgets.size > 0;
     this.onUpdate?.();
+    this.save();
   }
 }
