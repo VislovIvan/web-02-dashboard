@@ -280,8 +280,8 @@
   border-radius: 4px;
   box-shadow: var(--hard-sm);
   transition:
-    transform 70ms var(--ease-out),
-    box-shadow 70ms var(--ease-out),
+    transform 100ms var(--ease-out),
+    box-shadow 100ms var(--ease-out),
     background-color 120ms var(--ease-out);
 }
 
@@ -312,6 +312,12 @@
 .check-input:focus-visible + .check-box {
   outline: 2px solid var(--text);
   outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  .todo-item {
+    padding-block: 4px;
+  }
 }
 
 .todo-remove::before,

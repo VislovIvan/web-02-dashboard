@@ -62,9 +62,9 @@ function forecastUrl({ latitude, longitude }) {
   return `https://api.open-meteo.com/v1/forecast?${params}`;
 }
 
-const describe = (code) => WEATHER_CODES[code] ?? `Код погоды ${code}`;
+const describe = (code) => (Number.isInteger(code) ? WEATHER_CODES[code] ?? `Код погоды ${code}` : 'Нет данных');
 const unit = (value) => UNITS[value] ?? value ?? '';
-const withUnit = (value, units) => `${value} ${unit(units)}`;
+const withUnit = (value, units) => `${value}\u00a0${unit(units)}`;
 
 function dayLabel(isoDate, index) {
   if (index === 0) return 'Сегодня';
@@ -153,13 +153,17 @@ export class WeatherWidget extends UIComponent {
 
     const days = el('ul', 'forecast');
     daily.time.slice(0, 3).forEach((date, index) => {
-      const max = temperature.format(daily.temperature_2m_max[index]);
-      const min = temperature.format(daily.temperature_2m_min[index]);
+      const max = daily.temperature_2m_max[index];
+      const min = daily.temperature_2m_min[index];
+      // Пропуск в ответе не превращаем в ноль
+      const range = Number.isFinite(max) && Number.isFinite(min)
+        ? `от ${temperature.format(min)} до ${withUnit(temperature.format(max), dailyUnits.temperature_2m_max)}`
+        : 'нет данных';
       const item = el('li', 'forecast-day');
       item.append(
         el('span', 'forecast-name', dayLabel(date, index)),
         el('span', 'forecast-desc', describe(daily.weather_code[index])),
-        el('span', 'forecast-temp', `от ${min} до ${withUnit(max, dailyUnits.temperature_2m_max)}`),
+        el('span', 'forecast-temp', range),
       );
       days.append(item);
     });

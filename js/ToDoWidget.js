@@ -35,7 +35,7 @@ export class ToDoWidget extends UIComponent {
     this.input.id = `${this.id}-input`;
     this.input.type = 'text';
     this.input.maxLength = MAX_LENGTH;
-    this.input.placeholder = 'Например, зарядка';
+    this.input.placeholder = 'Что взять?';
     this.input.autocomplete = 'off';
     this.input.setAttribute('aria-describedby', `${this.id}-error`);
 
@@ -107,6 +107,7 @@ export class ToDoWidget extends UIComponent {
     this.tasks.push(task);
     this.list.append(this.createItem(task));
     this.input.value = '';
+    this.input.focus();
     this.setError('');
     this.updateSummary();
     this.changed();

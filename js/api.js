@@ -1,4 +1,4 @@
-const DEFAULT_TIMEOUT = 10000;
+const DEFAULT_TIMEOUT = 15000;
 
 export function isAbortError(error) {
   return error?.name === 'AbortError';
@@ -18,7 +18,8 @@ export async function fetchJSON(url, { signal, timeout = DEFAULT_TIMEOUT } = {})
   }, timeout);
 
   try {
-    const response = await fetch(url, { signal: controller.signal });
+    // no-cache: ответ из кэша только после сверки с сервером, без сети будет ошибка
+    const response = await fetch(url, { signal: controller.signal, cache: 'no-cache' });
     if (!response.ok) throw new Error(`Сервер ответил кодом ${response.status}.`);
     return await response.json();
   } catch (error) {

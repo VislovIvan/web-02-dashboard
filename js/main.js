@@ -51,7 +51,10 @@ const dashboard = new Dashboard({
   emptyNote: document.getElementById('desk-empty'),
   onHint: showHint,
   onUpdate: syncButtons,
-  onRemoved: (type) => addButtons.get(type)?.focus({ preventScroll: true }),
+  onRemoved: (type) => {
+    showHint('');
+    addButtons.get(type)?.focus({ preventScroll: true });
+  },
   onSaveError: () => showMessage(MESSAGES.unavailable),
 });
 

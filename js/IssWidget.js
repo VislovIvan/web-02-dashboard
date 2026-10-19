@@ -15,8 +15,8 @@ const VISIBILITY = { daylight: 'МКС над освещённой сторон�
 const degrees = new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const whole = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 });
 
-const latitudeText = (value) => `${degrees.format(Math.abs(value))}° ${value >= 0 ? 'с. ш.' : 'ю. ш.'}`;
-const longitudeText = (value) => `${degrees.format(Math.abs(value))}° ${value >= 0 ? 'в. д.' : 'з. д.'}`;
+const latitudeText = (value) => `${degrees.format(Math.abs(value))}°\u00a0${value >= 0 ? 'с.\u00a0ш.' : 'ю.\u00a0ш.'}`;
+const longitudeText = (value) => `${degrees.format(Math.abs(value))}°\u00a0${value >= 0 ? 'в.\u00a0д.' : 'з.\u00a0д.'}`;
 
 function readPosition(data) {
   const { latitude, longitude, altitude, velocity, timestamp } = data ?? {};
@@ -27,8 +27,8 @@ function readPosition(data) {
   return {
     latitude,
     longitude,
-    altitude: `${whole.format(altitude)} ${miles ? 'миль' : 'км'}`,
-    velocity: `${whole.format(velocity)} ${miles ? 'миль/ч' : 'км/ч'}`,
+    altitude: `${whole.format(altitude)}\u00a0${miles ? 'миль' : 'км'}`,
+    velocity: `${whole.format(velocity)}\u00a0${miles ? 'миль/ч' : 'км/ч'}`,
     visibility: VISIBILITY[data.visibility] ?? '',
     time: Number.isFinite(timestamp) ? new Date(timestamp * 1000) : new Date(),
   };
