@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Панель путешественника: Санкт-Петербург и Неаполь</title>
+  <meta name="description" content="Учебная панель виджетов для поездки из Санкт-Петербурга в Неаполь: список сборов, погода, курсы валют ЕЦБ и положение МКС.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M11 9V5h10v4' fill='none' stroke='%231a1a1a' stroke-width='3'/%3E%3Crect x='3' y='9' width='26' height='19' rx='3' fill='%23fff' stroke='%231a1a1a' stroke-width='3'/%3E%3Cpath d='M3 17h26' stroke='%231a1a1a' stroke-width='2'/%3E%3Crect x='12' y='14' width='8' height='6' fill='%234a94d8' stroke='%231a1a1a' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="mac.css">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <h1 class="brand">Панель путешественника</h1>
+      <p class="header-note">Санкт-Петербург ⇄ Неаполь</p>
+    </div>
+  </header>
+
+  <main class="container page">
+    <section class="toolbar" aria-labelledby="toolbar-title">
+      <h2 class="label" id="toolbar-title">Добавить виджет</h2>
+      <div class="toolbar-buttons" id="add-buttons"></div>
+      <p class="toolbar-hint" id="toolbar-hint" role="status" aria-live="polite"></p>
+    </section>
+
+    <p class="demo-note app-message" id="app-message" role="status" aria-live="polite" hidden>
+      <span class="label">Сохранение</span>
+      <span id="app-message-text"></span>
+    </p>
+
+    <p class="notice desk-empty" id="desk-empty" hidden>Панель пуста: добавьте виджет кнопками выше.</p>
+    <div class="desk" id="desk"></div>
+
+    <noscript>
+      <p class="notice notice-error">Панель работает на JavaScript: включите его в браузере.</p>
+    </noscript>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <p>
+        Учебная работа. Данные:
+        <a class="link" href="https://open-meteo.com/">Open-Meteo</a>,
+        <a class="link" href="https://frankfurter.dev/">Frankfurter</a> (ЕЦБ),
+        <a class="link" href="https://wheretheiss.at/">Where the ISS at?</a>,
+        <a class="link" href="https://github.com/corquaid/international-space-station-APIs">corquaid</a>.
+        Сделано с помощью Claude.
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,188 @@
+/* Панель путешественника: раскладка и окна-виджеты поверх mac.css */
+
+/* ── Шапка ──────────────────────────────────────────────── */
+
+.site-header {
+  position: static;
+}
+
+.site-header-inner {
+  flex-wrap: wrap;
+  gap: 4px var(--space-4);
+}
+
+.header-note {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+@media (min-width: 640px) {
+  .header-note {
+    margin-left: auto;
+  }
+}
+
+/* ── Страница ───────────────────────────────────────────── */
+
+.page {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: 30px;
+}
+
+/* ── Панель «Добавить виджет» ───────────────────────────── */
+
+.toolbar {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.toolbar-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.add-plus {
+  font-size: 16px;
+}
+
+.toolbar-hint {
+  min-height: 20px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+@media (min-width: 640px) {
+  .toolbar-buttons {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+/* ── Рабочий стол с окнами ──────────────────────────────── */
+
+.desk {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.desk:empty {
+  display: none;
+}
+
+@media (min-width: 760px) {
+  .widget-wide {
+    grid-column: span 2;
+  }
+}
+
+.widget {
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+  scroll-margin: 20px;
+  transition: outline-color 150ms var(--ease-out);
+}
+
+.widget.is-attention {
+  outline-color: var(--accent);
+}
+
+.widget.is-collapsed .window-bar {
+  border-bottom: 0;
+}
+
+.window-title:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Значки в квадратных кнопках заголовка рисуются псевдоэлементами */
+.window-box::before,
+.window-box::after {
+  content: "";
+  grid-area: 1 / 1;
+  background: currentColor;
+}
+
+.box-close::before,
+.box-close::after {
+  width: 14px;
+  height: 2px;
+  opacity: 0;
+  transform: rotate(45deg);
+  transition: opacity 120ms var(--ease-out);
+}
+
+.box-close::after {
+  transform: rotate(-45deg);
+}
+
+.box-close:focus-visible::before,
+.box-close:focus-visible::after,
+.box-close:active::before,
+.box-close:active::after {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .box-close:hover::before,
+  .box-close:hover::after {
+    opacity: 1;
+  }
+}
+
+.box-shade::before {
+  width: 12px;
+  height: 2px;
+}
+
+.box-shade::after {
+  width: 2px;
+  height: 12px;
+  opacity: 0;
+}
+
+.box-shade[aria-expanded="false"]::after {
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .window-box {
+    width: 40px;
+    height: 40px;
+  }
+
+  .box-close::before,
+  .box-close::after {
+    opacity: 1;
+  }
+}
+
+/* Подтверждение удаления прямо в окне */
+.window-confirm {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: 14px;
+  background: var(--danger-soft);
+  border-bottom: var(--rule) solid var(--ink-line);
+}
+
+.widget.is-collapsed .window-confirm {
+  border-top: var(--rule) solid var(--ink-line);
+  border-bottom: 0;
+}
+
+.window-confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+/* ── Сообщения ──────────────────────────────────────────── */
+
+.app-message .label {
+  color: var(--text-muted);
+}
