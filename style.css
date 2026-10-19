@@ -186,3 +186,141 @@
 .app-message .label {
   color: var(--text-muted);
 }
+
+/* ── Сборы ──────────────────────────────────────────────── */
+
+.todo-row {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.todo-row .input {
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-error:not(:empty) {
+  margin-top: var(--space-0);
+}
+
+.todo-summary {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+.todo-progress {
+  height: 6px;
+  overflow: hidden;
+  background: var(--bg-sunken);
+  border-radius: 4px;
+}
+
+.todo-progress-bar {
+  display: block;
+  height: 100%;
+  background: var(--ink-line);
+  border-radius: 4px;
+  transition: width 200ms var(--ease-out);
+}
+
+.todo-list {
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  border-top: 1px solid var(--border);
+}
+
+.todo-item:first-child {
+  border-top: 0;
+}
+
+.todo-check {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: 40px;
+  padding: var(--space-0) 0;
+  cursor: pointer;
+}
+
+.todo-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  transition: color 150ms var(--ease-out);
+}
+
+.todo-item.is-done .todo-text {
+  color: var(--text-faint);
+  text-decoration: line-through;
+}
+
+.todo-empty {
+  margin-top: var(--space-3);
+  font-size: 14px;
+}
+
+/* Флажок: настоящий input скрыт, рамку рисует соседний span */
+.check-box {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  background: var(--bg-raised);
+  border: var(--rule) solid var(--ink-line);
+  border-radius: 4px;
+  box-shadow: var(--hard-sm);
+  transition:
+    transform 70ms var(--ease-out),
+    box-shadow 70ms var(--ease-out),
+    background-color 120ms var(--ease-out);
+}
+
+.check-box::after {
+  content: "";
+  width: 10px;
+  height: 6px;
+  border-bottom: var(--rule) solid var(--accent-ink);
+  border-left: var(--rule) solid var(--accent-ink);
+  opacity: 0;
+  transform: translateY(-2px) rotate(-45deg);
+}
+
+.todo-check:active .check-box {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.check-input:checked + .check-box {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.check-input:checked + .check-box::after {
+  opacity: 1;
+}
+
+.check-input:focus-visible + .check-box {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.todo-remove::before,
+.todo-remove::after {
+  width: 12px;
+  height: 2px;
+  transform: rotate(45deg);
+}
+
+.todo-remove::after {
+  transform: rotate(-45deg);
+}

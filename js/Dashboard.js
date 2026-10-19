@@ -1,8 +1,11 @@
+import { ToDoWidget } from './ToDoWidget.js';
 import { UIComponent } from './UIComponent.js';
 import { el } from './dom.js';
 
 // Типы виджетов: по этому списку строятся кнопки «Добавить виджет»
-export const WIDGET_TYPES = {};
+export const WIDGET_TYPES = {
+  todo: { title: 'Сборы', Widget: ToDoWidget },
+};
 
 // Карточка вместо виджета, который не смог открыться
 class ErrorCard extends UIComponent {
