@@ -3,10 +3,12 @@ import { button, el } from './dom.js';
 import { UIComponent } from './UIComponent.js';
 
 const BASE = 'EUR';
-// Сверено с /v1/currencies: рубля в данных ЕЦБ нет
-const QUOTES = ['USD', 'GBP', 'CHF', 'CNY', 'TRY', 'JPY'];
-const RATES_URL = `https://api.frankfurter.dev/v1/latest?base=${BASE}&symbols=${QUOTES.join(',')}`;
+const QUOTES = ['RUB', 'USD', 'GBP', 'CHF', 'CNY', 'TRY', 'JPY'];
+const RATES_URL = `https://api.frankfurter.dev/v2/rates?base=${BASE}&quotes=${QUOTES.join(',')}`;
+// Порядок в списках конвертера: рубль первым
+const CONVERTER_ORDER = ['RUB', BASE, ...QUOTES.slice(1)];
 const NAMES = {
+  RUB: 'российский рубль',
   EUR: 'евро',
   USD: 'доллар США',
   GBP: 'фунт стерлингов',
@@ -21,19 +23,23 @@ const rateFormat = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 4 });
 const moneyFormat = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 });
 
 const knownCode = (code, fallback) => (Object.hasOwn(NAMES, code) ? code : fallback);
+const fullDate = (iso) => iso.split('-').reverse().join('.');
+const shortDate = (iso) => iso.split('-').reverse().slice(0, 2).join('.');
 
+// Ответ v2: массив строк { date, base, quote, rate }, у каждой валюты своя дата
 function readRates(data) {
-  if (data?.base !== BASE || !/^\d{4}-\d{2}-\d{2}$/.test(data.date) || typeof data.rates !== 'object') {
-    throw new Error('Сервис курсов прислал неполные данные.');
+  if (!Array.isArray(data)) throw new Error('Сервис курсов прислал неполные данные.');
+  const found = {};
+  for (const row of data) {
+    const valid = row?.base === BASE && QUOTES.includes(row.quote) && Number.isFinite(row.rate) && row.rate > 0
+      && /^\d{4}-\d{2}-\d{2}$/.test(row.date);
+    // Если по валюте несколько строк, берём самую свежую
+    if (valid && !(found[row.quote]?.date >= row.date)) found[row.quote] = { rate: row.rate, date: row.date };
   }
-  const rates = { [BASE]: 1 };
-  for (const code of QUOTES) {
-    const value = data.rates[code];
-    if (typeof value === 'number' && value > 0) rates[code] = value;
-  }
-  if (Object.keys(rates).length < 2) throw new Error('В ответе нет ни одного курса.');
-  const [year, month, day] = data.date.split('-');
-  return { date: `${day}.${month}.${year}`, rates };
+  const rows = QUOTES.filter((code) => found[code]).map((code) => ({ code, ...found[code] }));
+  if (!rows.length) throw new Error('В ответе нет ни одного курса.');
+  const latest = rows.reduce((max, row) => (row.date > max ? row.date : max), rows[0].date);
+  return { rows, latest };
 }
 
 // «1 000,5» и «1000.5» читаем одинаково; отрицательные и пустые не принимаем
@@ -52,7 +58,7 @@ export class CurrencyWidget extends UIComponent {
     const state = options.state ?? {};
     this.amount = typeof state.amount === 'string' && state.amount.length <= 20 ? state.amount : '100';
     this.from = knownCode(state.from, BASE);
-    this.to = knownCode(state.to, 'USD');
+    this.to = knownCode(state.to, 'RUB');
     this.rates = null;
   }
 
@@ -72,7 +78,7 @@ export class CurrencyWidget extends UIComponent {
     head.append(headRow);
     this.rateRows = el('tbody');
     table.append(this.caption, head, this.rateRows);
-    const note = el('p', 'updated', 'ЕЦБ публикует курсы по рабочим дням.');
+    const note = el('p', 'updated', 'Данные центральных банков, Frankfurter. У каждой валюты своя дата: банки публикуют курсы по рабочим дням.');
 
     this.result.append(table, note, this.renderConverter());
     body.append(this.status.element, this.result);
@@ -129,11 +135,11 @@ export class CurrencyWidget extends UIComponent {
 
   async load() {
     this.result.hidden = true;
-    this.status.show('loading', 'Загружаем курсы ЕЦБ…');
+    this.status.show('loading', 'Загружаем курсы валют…');
     try {
-      const { date, rates } = readRates(await this.request('rates', RATES_URL));
-      this.rates = rates;
-      this.showRates(date);
+      const { rows, latest } = readRates(await this.request('rates', RATES_URL));
+      this.rates = Object.fromEntries([[BASE, 1], ...rows.map(({ code, rate }) => [code, rate])]);
+      this.showRates(rows, latest);
       this.status.show('ready');
     } catch (error) {
       if (isAbortError(error) || this.destroyed) return;
@@ -142,18 +148,21 @@ export class CurrencyWidget extends UIComponent {
     }
   }
 
-  showRates(date) {
-    this.caption.textContent = `Курс ЕЦБ на ${date}`;
-    const codes = Object.keys(this.rates);
-    const rows = codes.filter((code) => code !== BASE).map((code) => {
+  showRates(rows, latest) {
+    this.caption.textContent = `Курсы на ${fullDate(latest)}`;
+    this.rateRows.replaceChildren(...rows.map(({ code, rate, date }) => {
       const row = el('tr');
       const name = el('th');
       name.scope = 'row';
       name.append(el('span', 'rate-code', code), el('span', 'rate-name', NAMES[code]));
-      row.append(name, el('td', 'rate-value', rateFormat.format(this.rates[code])));
+      const value = el('td', 'rate-value');
+      if (date !== latest) value.append(el('span', 'rate-date', `на ${shortDate(date)}`));
+      value.append(rateFormat.format(rate));
+      row.append(name, value);
       return row;
-    });
-    this.rateRows.replaceChildren(...rows);
+    }));
+
+    const codes = CONVERTER_ORDER.filter((code) => Object.hasOwn(this.rates, code));
 
     for (const select of [this.fromSelect, this.toSelect]) {
       select.replaceChildren(...codes.map((code) => {

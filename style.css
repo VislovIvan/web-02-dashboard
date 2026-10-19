@@ -449,6 +449,7 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-align: left;
+  white-space: nowrap;
   color: var(--text-faint);
   border-bottom: 1px solid var(--border);
 }
@@ -466,8 +467,13 @@
   border-bottom: 1px solid var(--border);
 }
 
+.rates tbody th {
+  padding-right: var(--space-2);
+}
+
 .rates tbody td {
   text-align: right;
+  white-space: nowrap;
 }
 
 .rate-code {
@@ -480,6 +486,19 @@
 .rate-name {
   font-size: 14px;
   color: var(--text-muted);
+}
+
+.rate-date {
+  margin-right: var(--space-1);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+@media (max-width: 359px) {
+  .rate-date {
+    display: block;
+    margin-right: 0;
+  }
 }
 
 .converter {
