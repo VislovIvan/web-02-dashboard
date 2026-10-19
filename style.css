@@ -332,6 +332,10 @@
   font-size: 14px;
 }
 
+.window-body > .status:first-child .notice {
+  margin-top: 0;
+}
+
 /* ── Сводка «подпись: значение» ─────────────────────────── */
 
 .facts {
@@ -401,4 +405,89 @@
 .forecast-temp {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+}
+
+/* ── Валюты ─────────────────────────────────────────────── */
+
+.currency-result {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.rates {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.rates caption {
+  margin-bottom: var(--space-1);
+  text-align: left;
+}
+
+.rates thead th {
+  padding-bottom: var(--space-0);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: left;
+  color: var(--text-faint);
+  border-bottom: 1px solid var(--border);
+}
+
+.rates th:last-child,
+.rate-value {
+  text-align: right;
+}
+
+.rates tbody th,
+.rates tbody td {
+  padding: var(--space-0) 0;
+  font-weight: 400;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.rates tbody td {
+  text-align: right;
+}
+
+.rate-code {
+  display: inline-block;
+  min-width: 44px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.rate-name {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.converter {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.converter-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: var(--space-1);
+}
+
+.converter-swap {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  font-family: var(--font);
+  font-size: 20px;
+}
+
+.converter-output {
+  min-height: 24px;
+  font-size: 20px;
+  overflow-wrap: anywhere;
 }

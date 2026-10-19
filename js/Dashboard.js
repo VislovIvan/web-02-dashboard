@@ -1,3 +1,4 @@
+import { CurrencyWidget } from './CurrencyWidget.js';
 import { ToDoWidget } from './ToDoWidget.js';
 import { UIComponent } from './UIComponent.js';
 import { WeatherWidget } from './WeatherWidget.js';
@@ -7,6 +8,7 @@ import { el } from './dom.js';
 export const WIDGET_TYPES = {
   todo: { title: 'Сборы', Widget: ToDoWidget },
   weather: { title: 'Погода', Widget: WeatherWidget },
+  currency: { title: 'Валюты', Widget: CurrencyWidget },
 };
 
 // Карточка вместо виджета, который не смог открыться
