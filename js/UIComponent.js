@@ -1,3 +1,4 @@
+import { fetchJSON } from './api.js';
 import { button, el } from './dom.js';
 
 // Окно виджета в духе классической Mac OS: закрыть слева, свернуть в заголовок справа
@@ -15,6 +16,7 @@ export class UIComponent {
     // Один сигнал снимает все обработчики карточки разом
     this.listeners = new AbortController();
     this.intervals = new Set();
+    this.requests = new Map();
     this.cleanups = [];
   }
 
@@ -141,6 +143,43 @@ export class UIComponent {
     this.intervals.delete(id);
   }
 
+  // Новый запрос того же вида отменяет предыдущий
+  async request(key, url, options = {}) {
+    this.cancelRequest(key);
+    const controller = new AbortController();
+    this.requests.set(key, controller);
+    try {
+      return await fetchJSON(url, { ...options, signal: controller.signal });
+    } finally {
+      if (this.requests.get(key) === controller) this.requests.delete(key);
+    }
+  }
+
+  cancelRequest(key) {
+    this.requests.get(key)?.abort();
+    this.requests.delete(key);
+  }
+
+  // Строка состояния: «загрузка» или ошибка с кнопкой «Повторить»
+  createStatus(onRetry) {
+    const live = el('div', 'status');
+    live.setAttribute('aria-live', 'polite');
+    const box = el('div', 'notice');
+    const text = el('p');
+    const retry = button('btn btn-sm', 'Повторить');
+    box.append(text, retry);
+    live.append(box);
+    this.listen(retry, 'click', onRetry);
+
+    const show = (state, message = '') => {
+      box.hidden = state === 'ready';
+      box.classList.toggle('notice-error', state === 'error');
+      retry.hidden = state !== 'error';
+      text.textContent = message;
+    };
+    return { element: live, show };
+  }
+
   addCleanup(callback) {
     this.cleanups.push(callback);
   }
@@ -151,6 +190,8 @@ export class UIComponent {
     this.listeners.abort();
     this.intervals.forEach((id) => clearInterval(id));
     this.intervals.clear();
+    this.requests.forEach((controller) => controller.abort());
+    this.requests.clear();
     this.cleanups.forEach((callback) => callback());
     this.cleanups = [];
     this.element?.remove();

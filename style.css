@@ -324,3 +324,81 @@
 .todo-remove::after {
   transform: rotate(-45deg);
 }
+
+/* ── Состояние загрузки и ошибки ────────────────────────── */
+
+.status .notice {
+  margin-top: var(--space-3);
+  font-size: 14px;
+}
+
+/* ── Сводка «подпись: значение» ─────────────────────────── */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: var(--space-2) var(--space-3);
+  margin: 0;
+}
+
+.facts dt {
+  margin-bottom: 4px;
+}
+
+.facts dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.updated {
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* ── Погода ─────────────────────────────────────────────── */
+
+.weather-result {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.weather-now {
+  display: grid;
+  gap: 4px;
+}
+
+.weather-temp {
+  font-size: 50px;
+  line-height: 1;
+}
+
+.weather-desc {
+  font-size: 16px;
+}
+
+.forecast {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.forecast-day {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr) auto;
+  gap: var(--space-2);
+  align-items: baseline;
+  padding: var(--space-1) 0;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.forecast-desc {
+  color: var(--text-muted);
+}
+
+.forecast-temp {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
