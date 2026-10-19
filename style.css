@@ -340,13 +340,24 @@
 
 .facts {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: var(--space-2) var(--space-3);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
   margin: 0;
+}
+
+.facts-four {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .facts-four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .facts dt {
   margin-bottom: 4px;
+  letter-spacing: 0.06em;
 }
 
 .facts dd {
@@ -490,4 +501,70 @@
   min-height: 24px;
   font-size: 20px;
   overflow-wrap: anywhere;
+}
+
+/* ── МКС ────────────────────────────────────────────────── */
+
+.iss-map {
+  overflow: hidden;
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+}
+
+.iss-map canvas {
+  width: 100%;
+  aspect-ratio: 5 / 2;
+}
+
+.iss-position {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+.iss-visibility {
+  font-size: 14px;
+}
+
+.iss-crew {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.iss-crew .status .notice {
+  margin-top: 0;
+}
+
+.iss-crew-box {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.crew-summary {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.crew-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+  gap: 0 var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.crew-list li {
+  display: grid;
+  padding: var(--space-0) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.crew-meta {
+  font-size: 12px;
+  color: var(--text-faint);
 }

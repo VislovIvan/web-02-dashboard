@@ -177,6 +177,7 @@ export class UIComponent {
       retry.hidden = state !== 'error';
       text.textContent = message;
     };
+    show('ready');
     return { element: live, show };
   }
 
